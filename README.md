@@ -203,5 +203,26 @@ public class Consumer {
 
 
 ```
+### 如何使用社区版本的rocketmq 发送延迟消息
 
+```java
+ /*设置为您在消息队列RocketMQ版控制台创建的Topic。*/
+                Message msg = new Message("YOUR TOPIC",
+                    /*设置消息的Tag。*/
+                    "YOUR MESSAGE TAG",
+                    /*消息内容。*/
+                    "Hello world".getBytes(RemotingHelper.DEFAULT_CHARSET));
+                /*发送延时消息，需要设置延时时间，单位毫秒（ms），消息将在指定延时时间后投递，例如消息将在3秒后投递。*/
+                long delayTime = System.currentTimeMillis() + 3000;
+                msg.putUserProperty("__STARTDELIVERTIME", String.valueOf(delayTime));
+      
+                /**
+                *若需要发送定时消息，则需要设置定时时间，消息将在指定时间进行投递，例如消息将在2021-08-10 18:45:00投递。
+                *定时时间格式为：yyyy-MM-dd HH:mm:ss，若设置的时间戳在当前时间之前，则消息将被立即投递给Consumer。
+                * long timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2021-08-10 18:45:00").getTime();
+                * msg.putUserProperty("__STARTDELIVERTIME", String.valueOf(timeStamp));
+                */
+                SendResult sendResult = producer.send(msg);
+                System.out.printf("%s%n", sendResult);
 
+```
