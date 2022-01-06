@@ -28,7 +28,7 @@
     <name>rocketmq-store ${project.version}</name>
 
     <properties>
-        <jackson.version>2.9.9</jackson.version>
+        <jackson.version>2.9.10</jackson.version>
     </properties>
 
     <dependencies>
