@@ -10,9 +10,9 @@
 定时消息与延时消息在代码配置上存在一些差异，但是最终达到的效果相同：消息在发送到消息队列RocketMQ版服务端后并不会立马投递，而是根据消息中的属性延迟固定时间后才投递给消费者。
 
 ## 实现原理（3种实现方案）
-#### 1.代理实现
-#### 2.时间轮和delay-commit-log实现
-#### 3.时间轮和时间file实现
+#### 1.代理实现 [链接](https://github.com/venus-suite/rocketmq-with-delivery-time/wiki/1.%E4%BB%A3%E7%90%86%E5%AE%9E%E7%8E%B0)
+#### 2.时间轮和delay-commit-log实现 [链接](https://github.com/venus-suite/rocketmq-with-delivery-time/wiki/2.%E6%97%B6%E9%97%B4%E8%BD%AE%E5%92%8Cdelay-file%E5%AE%9E%E7%8E%B0)
+#### 3.时间轮和时间file实现 [链接](https://github.com/venus-suite/rocketmq-with-delivery-time/wiki/3.%E6%97%B6%E9%97%B4%E8%BD%AE%E5%92%8C%E7%A7%92%E7%BA%A7%E6%96%87%E4%BB%B6%E5%AE%9E%E7%8E%B0)
 
 ## 适用场景
 
