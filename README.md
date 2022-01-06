@@ -59,7 +59,7 @@ StartDeliverTime是服务端开始向消费端投递的时间。如果消费者�
 ```java
 
 import com.aliyun.openservices.ons.api.*;
-import org.apache.commons.lang3.time.DateFormatUtils;
+import com.aliyun.openservices.shade.org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.util.Date;
 import java.util.Properties;
@@ -115,6 +115,91 @@ public class ProducerDelayTest {
         producer.shutdown();
     }
 }           
+
+
+```
+
+#### 消息接收
+
+
+```java
+
+import com.aliyun.openservices.shade.org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
+import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import org.apache.rocketmq.client.exception.MQClientException;
+import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
+import org.apache.rocketmq.common.message.MessageExt;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * This example shows how to subscribe and consume messages using providing {@link DefaultMQPushConsumer}.
+ */
+public class Consumer {
+
+    public static void main(String[] args) throws InterruptedException, MQClientException {
+
+        /*
+         * Instantiate with specified consumer group name.
+         */
+
+        final int[] totals = {0};
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("please_rename_unique_group_name_4");
+
+        consumer.setNamesrvAddr("localhost:9876");
+        /*
+         * Specify name server addresses.
+         * <p/>
+         *
+         * Alternatively, you may specify name server addresses via exporting environmental variable: NAMESRV_ADDR
+         * <pre>
+         * {@code
+         * consumer.setNamesrvAddr("name-server1-ip:9876;name-server2-ip:9876");
+         * }
+         * </pre>
+         */
+
+        /*
+         * Specify where to start in case the specified consumer group is a brand new one.
+         */
+        consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
+
+        /*
+         * Subscribe one more more topics to consume.
+         */
+        consumer.subscribe("TopicTest", "*");
+
+        /*
+         *  Register callback to execute on arrival of messages fetched from brokers.
+         */
+        consumer.registerMessageListener(new MessageListenerConcurrently() {
+
+            @Override
+            public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs,
+                                                            ConsumeConcurrentlyContext context) {
+                System.out.println("接收到消息："+ DateFormatUtils.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
+                System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
+                for(MessageExt m: msgs){
+                  System.out.println(">>>"+new String(  m.getBody()));
+                }
+                totals[0] +=1;
+                System.out.println(">>>>>total="+ totals[0]);
+                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+            }
+        });
+
+        /*
+         *  Launch the consumer instance.
+         */
+        consumer.start();
+
+        System.out.printf("Consumer Started.%n");
+    }
+}
 
 
 ```
